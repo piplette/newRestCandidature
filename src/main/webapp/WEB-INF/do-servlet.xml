@@ -22,27 +22,27 @@ http://cxf.apache.org/schemas/jaxws.xsd
 http://www.springframework.org/schema/security 
 http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 
-	<security:http auto-config='true'>
-		<security:intercept-url pattern="/logs/**"
-			access="ROLE_USER, ROLE_ADMIN" />
-		<security:intercept-url pattern="/logviewer.html"
-			access="ROLE_USER, ROLE_ADMIN" />
-		<security:intercept-url pattern="/nomRessource/**"
-			access="ROLE_USER, ROLE_ADMIN" />
-		<security:intercept-url pattern="/**"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<security:http-basic />
-	</security:http>
+<!-- 	<security:http auto-config='true'> -->
+<!-- 		<security:intercept-url pattern="/logs/**" -->
+<!-- 			access="ROLE_USER, ROLE_ADMIN" /> -->
+<!-- 		<security:intercept-url pattern="/logviewer.html" -->
+<!-- 			access="ROLE_USER, ROLE_ADMIN" /> -->
+<!-- 		<security:intercept-url pattern="/nomRessource/**" -->
+<!-- 			access="ROLE_USER, ROLE_ADMIN" /> -->
+<!-- 		<security:intercept-url pattern="/**" -->
+<!-- 			access="IS_AUTHENTICATED_ANONYMOUSLY" /> -->
+<!-- 		<security:http-basic /> -->
+<!-- 	</security:http> -->
 
-	<security:authentication-manager>
-		<security:authentication-provider>
-			<security:user-service>
-				<security:user name="username1" password="password1"
-					authorities="ROLE_USER" />
-				<security:user name="username2" password="password2"
-					authorities="ROLE_USER, ROLE_ADMIN" />
-			</security:user-service>
-		</security:authentication-provider>
+<!-- 	<security:authentication-manager> -->
+<!-- 		<security:authentication-provider> -->
+<!-- 			<security:user-service> -->
+<!-- 				<security:user name="username1" password="password1" -->
+<!-- 					authorities="ROLE_USER" /> -->
+<!-- 				<security:user name="username2" password="password2" -->
+<!-- 					authorities="ROLE_USER, ROLE_ADMIN" /> -->
+<!-- 			</security:user-service> -->
+<!-- 		</security:authentication-provider> -->
 
 <!-- 		<security:authentication-provider> -->
 <!-- 			<security:password-encoder ref="passwordEncoder" /> -->
@@ -52,7 +52,7 @@ http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 <!-- 				users-by-username-query="select username, password, enabled from usuario where username = ?" -->
 <!-- 				authorities-by-username-query="select username, papel from autoridade where username = ?" /> -->
 <!-- 		</security:authentication-provider> -->
-	</security:authentication-manager>
+<!-- 	</security:authentication-manager> -->
 
 	<bean id="candidatController" class="com.candidature.web.CandidatController">
 	</bean>
@@ -62,7 +62,10 @@ http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 	</bean>
 	<bean id="candidatureController" class="com.candidature.web.CandidatureController">
 	</bean>
-
+	<bean id="authorization" class="com.candidature.auth.Authorization">
+	</bean>
+	<bean id="basicAuth" class="com.candidature.auth.BasicAuth">
+	</bean>
 	<!-- Rest Template -->
 	<bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
 		<property name="messageConverters">

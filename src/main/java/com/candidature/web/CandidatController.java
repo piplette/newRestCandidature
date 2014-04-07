@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.candidature.auth.Authorization;
 import com.candidature.entities.Candidat;
 
 @Controller
@@ -87,8 +88,24 @@ public class CandidatController {
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET, consumes = "application/json", produces = "application/json")
 	@ResponseBody
 	public ResponseEntity<Object> findCandidatById(
-			@PathVariable("id") int candidatId) {
+			@PathVariable("id") int candidatId,
+			@RequestHeader(value = "Authorization", required = false) String authorization) {
 		open();
+		if(authorization == null) {
+			close();
+			return new ResponseEntity<Object>("COMPTE ABSENT", HttpStatus.UNAUTHORIZED);
+		}else {
+			Candidat candidat = null;
+			// Recuperation currentUser
+			try {
+				candidat = Authorization.getCurrentUserByAuthorization(authorization);
+				// Si erreur pendant la recuperation
+			} catch (Exception e) {
+				return new ResponseEntity<Object>("ERREUR", HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+			if(candidat == null){return new ResponseEntity<Object>("MAUVAISE IDENTIFICATION", HttpStatus.UNAUTHORIZED);}
+		}
+		
 		if(candidatId <= 0){close();return new ResponseEntity<Object>("PAS ID", HttpStatus.BAD_REQUEST);}
 		Candidat candidat = em.find(Candidat.class, candidatId);
 		close();
