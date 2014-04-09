@@ -26,16 +26,17 @@ public class Candidature implements Serializable{
 	@Column(nullable = false)
 	private String motivation;
 	
+	@Column(name = "CANDIDAT_ID", nullable = false)
+	private int idCandidat;
+	
+	@Column(name = "SESSION_ID", nullable = false)
+	private int idSession;
+	
+	@Column(name = "ETAT_ID", nullable = false)
+	private int idEtat;
+	
 	private static final long serialVersionUID = 1L;
 	
-	@ManyToOne	
-	private Session session;
-	
-	@ManyToOne
-	private Etat etat;
-	
-	@OneToOne
-	private Candidat candidat;
 	
 	public Candidature() {
 		super();
@@ -56,37 +57,6 @@ public class Candidature implements Serializable{
 	public void setDateInscription(Date dateInscription) {
 		this.dateInscription = dateInscription;
 	}	
-
-	@JsonIgnore
-	public Session getSession() {
-		return session;
-	}
-	
-	public void setSession(Session session) {
-		this.session = session;
-	}
-	
-	@JsonIgnore
-	public Etat getEtat() {
-		return etat;
-	}
-	
-	public void setEtat(Etat etat) {
-		this.etat = etat;
-	}
-	
-	@JsonIgnore
-	public Candidat getCandidat() {
-		return candidat;
-	}
-	
-	public Candidat getCandidatCandidature() {
-		return candidat;
-	}
-	
-	public void setCandidat(Candidat candidat) {
-		this.candidat = candidat;
-	}
 	
 	public String getMotivation() {
 		return this.motivation;
@@ -94,5 +64,29 @@ public class Candidature implements Serializable{
 
 	public void setMotivation(String motivation) {
 		this.motivation = motivation;
+	}
+
+	public int getIdCandidat() {
+		return idCandidat;
+	}
+
+	public void setIdCandidat(int idCandidat) {
+		this.idCandidat = idCandidat;
+	}
+
+	public int getIdSession() {
+		return idSession;
+	}
+
+	public void setIdSession(int idSession) {
+		this.idSession = idSession;
+	}
+
+	public int getIdEtat() {
+		return idEtat;
+	}
+
+	public void setIdEtat(int idEtat) {
+		this.idEtat = idEtat;
 	}
 }

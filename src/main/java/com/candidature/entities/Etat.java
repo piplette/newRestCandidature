@@ -24,10 +24,10 @@ public class Etat implements Serializable{
 	@Column(nullable = false, unique = true)
 	private String nom;
 	
-	private static final long serialVersionUID = 1L;
+	@Transient
+	private List<Candidature> candidatures;
 	
-	@OneToMany(mappedBy="etat") 
-	private List<Candidature> candidatures = new ArrayList<Candidature>();
+	private static final long serialVersionUID = 1L;
 	
 	public Etat() {
 		super();
@@ -47,12 +47,11 @@ public class Etat implements Serializable{
 		this.nom = nom;
 	}
 	
-	@JsonIgnore
-	public List<Candidature> getCandidatures() {
+	public List<Candidature> getListCandidatures() {
 		return candidatures;
 	}
 	
-	public void setCandidatures(List<Candidature> candidatures) {
+	public void setListCandidatures(List<Candidature> candidatures) {
 		this.candidatures = candidatures;
 	}
 }

@@ -34,10 +34,10 @@ public class Session implements Serializable{
 	@Column(name = "PERIODE_SESSION", nullable = false)
 	private Date periodeSession;
 	
+	@Transient
+	private List<Candidature> candidatures;
+	
 	private static final long serialVersionUID = 1L;
-
-	@OneToMany(mappedBy="session") 	
-	private List<Candidature> candidatures = new ArrayList<Candidature>();
 	
 	public Session() {
 		super();
@@ -81,13 +81,12 @@ public class Session implements Serializable{
 	public void setPeriodeSession(Date periodeSession) {
 		this.periodeSession = periodeSession;
 	}
-
-	@JsonIgnore
-	public List<Candidature> getCandidatures() {
+	
+	public List<Candidature> getListCandidatures() {
 		return candidatures;
 	}
 	
-	public void setCandidatures(List<Candidature> candidatures) {
+	public void setListCandidatures(List<Candidature> candidatures) {
 		this.candidatures = candidatures;
 	}
 }

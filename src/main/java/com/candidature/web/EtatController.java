@@ -41,7 +41,7 @@ public class EtatController {
 	/*****************************************/
 	/***** RECHERCHER UN ETAT PAR ID *****/
 	/*****************************************/
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/get/{id}", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
 	public ResponseEntity<Object> findEtatById(@PathVariable("id") int etatId) {
 		open();
@@ -55,7 +55,7 @@ public class EtatController {
 	/*****************************************/
 	/***** RECHERCHER TOUS LES ETATS *****/
 	/*****************************************/
-	@RequestMapping(value = "/etats", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/getAll", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
 	public ResponseEntity<Object> findAllEtat(@RequestParam(value = "sujet", required = false) String sujet) {
 		open();
@@ -69,7 +69,8 @@ public class EtatController {
 	/****************************************/
 	/******* ENREGISTREMENT D'UN ETAT *******/
 	/****************************************/
-	@RequestMapping(method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = "/add", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	@ResponseBody
 	public ResponseEntity<Object> createEtat(@RequestBody Etat etat) {
 		open();
 		if (etat.getNom() == null) { return new ResponseEntity<Object>("nom vide", HttpStatus.BAD_REQUEST);} 
@@ -89,7 +90,8 @@ public class EtatController {
 	/****************************************/
 	/******** MISE A JOUR D'UN ETAT *********/
 	/****************************************/
-	@RequestMapping(method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = "/update", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
+	@ResponseBody
 	public ResponseEntity<Object> updateEtat(@RequestBody Etat etat) {
 		open();
 		if (etat.getId() <= 0) { return new ResponseEntity<Object>("id vide", HttpStatus.BAD_REQUEST);}	
@@ -111,7 +113,7 @@ public class EtatController {
 	/****************************************/
 	/********* SUPPRESSION D'UN ETAT ********/
 	/****************************************/
-	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "application/json")
+	@RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE, produces = "application/json")
 	@ResponseBody
 	public ResponseEntity<Object> deleteEtat(@PathVariable("id") int etatId) {
 		open();

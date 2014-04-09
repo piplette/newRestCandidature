@@ -81,11 +81,34 @@ public class CandidatController {
             throw new RuntimeException(e);
         }
     }
+	
+	/*****************************************/
+	/***** RECHERCHER UN CANDIDAT PAR ID *****/
+	/*****************************************/
+	@RequestMapping(value = "/login", method = RequestMethod.GET, consumes = "application/json", produces = "application/json")
+	@ResponseBody
+	public ResponseEntity<Object> findCandidat(
+			@RequestHeader(value = "Authorization", required = false) String authorization) {
+		if(authorization == null) {
+			return new ResponseEntity<Object>("AUTHENTIFICATION ABSENTE", HttpStatus.UNAUTHORIZED);
+		}else {
+			Candidat candidat = null;
+			// Recuperation candidat
+			try {
+				candidat = Authorization.getCurrentUserByAuthorization(authorization);
+				// Si erreur pendant la recuperation
+			} catch (Exception e) {
+				return new ResponseEntity<Object>("ERREUR", HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+			if(candidat == null){return new ResponseEntity<Object>("MAUVAISE IDENTIFICATION", HttpStatus.UNAUTHORIZED);}
+			return new ResponseEntity<Object>(candidat, HttpStatus.OK);
+		}		
+	}
 
 	/*****************************************/
 	/***** RECHERCHER UN CANDIDAT PAR ID *****/
 	/*****************************************/
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET, consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = "/get/{id}", method = RequestMethod.GET, consumes = "application/json", produces = "application/json")
 	@ResponseBody
 	public ResponseEntity<Object> findCandidatById(
 			@PathVariable("id") int candidatId,
@@ -116,7 +139,7 @@ public class CandidatController {
 	/*****************************************/
 	/***** RECHERCHER TOUS LES CANDIDATS *****/
 	/*****************************************/
-	@RequestMapping(value = "/candidats", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/getAll", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
 	public ResponseEntity<Object> findAllCandidat(@RequestParam(value = "sujet", required = false) String sujet) {
 		open();
@@ -130,7 +153,7 @@ public class CandidatController {
 	/****************************************/
 	/***** ENREGISTREMENT D'UN CANDIDAT *****/
 	/****************************************/
-	@RequestMapping(method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = "/add", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	public ResponseEntity<Object> createCandidat(@RequestBody Candidat candidat) {
 		open();
 		if (candidat.getAdresse() == null) { return new ResponseEntity<Object>("adresse vide", HttpStatus.BAD_REQUEST);} 
@@ -163,7 +186,7 @@ public class CandidatController {
 	/****************************************/
 	/***** ENREGISTREMENT D'UN CANDIDAT *****/
 	/****************************************/
-	@RequestMapping(method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = "/update", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
 	public ResponseEntity<Object> updateCandidat(@RequestBody Candidat candidat) {
 		open();
 		if (candidat.getId() <= 0) { return new ResponseEntity<Object>("idCandidat vide", HttpStatus.BAD_REQUEST);}
@@ -206,9 +229,9 @@ public class CandidatController {
 	/****************************************/
 	/******* SUPPRESSION D'UN CANDIDAT ******/
 	/****************************************/
-	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "application/json")
+	@RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE, produces = "application/json")
 	@ResponseBody
-	public ResponseEntity<Object> deleteSession(@PathVariable("id") int candidatId) {
+	public ResponseEntity<Object> deleteCandidat(@PathVariable("id") int candidatId) {
 		open();
 		if(candidatId <= 0) { return new ResponseEntity<Object>("idCandidat vide", HttpStatus.BAD_REQUEST);}
 		try {

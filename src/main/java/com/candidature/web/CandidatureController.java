@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.candidature.entities.Candidat;
 import com.candidature.entities.Candidature;
 import com.candidature.entities.Etat;
 
@@ -43,7 +44,7 @@ public class CandidatureController {
 	/*********************************************/
 	/***** RECHERCHER UNE CANDIDATURE PAR ID *****/
 	/*********************************************/
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/get/{id}", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
 	public ResponseEntity<Object> findCandidatureById(
 			@PathVariable("id") int candidatureId) {
@@ -55,10 +56,10 @@ public class CandidatureController {
 		return new ResponseEntity<Object>(candidature, HttpStatus.OK);
 	}
 
-	/*****************************************/
-	/***** RECHERCHER TOUS LES CANDIDATS *****/
-	/*****************************************/
-	@RequestMapping(value = "/candidatures", method = RequestMethod.GET, produces = "application/json")
+	/**********************************************/
+	/***** RECHERCHER TOUTES LES CANDIDATURES *****/
+	/**********************************************/
+	@RequestMapping(value = "/getAll", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
 	public ResponseEntity<Object> findAllCandidature(@RequestParam(value = "sujet", required = false) String sujet) {
 		open();
@@ -69,10 +70,11 @@ public class CandidatureController {
 		return new ResponseEntity<Object>(candidatures, HttpStatus.OK);
 	}
 
-	/****************************************/
-	/***** ENREGISTREMENT D'UN CANDIDAT *****/
-	/****************************************/
-	@RequestMapping(method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	/********************************************/
+	/***** ENREGISTREMENT D'UNE CANDIDATURE *****/
+	/********************************************/
+	@RequestMapping(value = "/add", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	@ResponseBody
 	public ResponseEntity<Object> createCandidature(@RequestBody Candidature candidature) {
 		open();
 		if (candidature.getMotivation() == null) { return new ResponseEntity<Object>("motivation vide", HttpStatus.BAD_REQUEST);} 
@@ -82,7 +84,6 @@ public class CandidatureController {
 		candidature.setDateInscription(new Date(date.getYear(), date.getMonth(), date.getDate()));
 		Etat etat = new Etat();
 		etat.setId(5);
-		candidature.setEtat(etat);
 		try {
 			EntityTransaction tx = em.getTransaction();
 			tx.begin();
@@ -97,9 +98,10 @@ public class CandidatureController {
 	}
 	
 	/****************************************/
-	/***** ENREGISTREMENT D'UN CANDIDAT *****/
+	/***** MISE A JOUR D'UNE CANDIDATURE ****/
 	/****************************************/
-	@RequestMapping(method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = "/update", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
+	@ResponseBody
 	public ResponseEntity<Object> updateCandidat(@RequestBody Candidature candidature) {
 		open();
 		try {
@@ -115,5 +117,28 @@ public class CandidatureController {
 		close();
 		return new ResponseEntity<Object>("OK", HttpStatus.OK);
 	}
+	
+	/************************************************/
+	/********* SUPPRESSION D'UNE CANDIDATURE ********/
+	/************************************************/
+	@RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE, produces = "application/json")
+	@ResponseBody
+	public ResponseEntity<Object> deleteCandidature(@PathVariable("id") int candidatureId) {
+		open();
+		if(candidatureId <= 0) { return new ResponseEntity<Object>("idCandidature vide", HttpStatus.BAD_REQUEST);}
+		try {
+			EntityTransaction tx = em.getTransaction();
+			tx.begin();
+			Candidature candidature = em.find(Candidature.class, candidatureId);
+			if(candidature == null){ return new ResponseEntity<Object>("NON TROUVE", HttpStatus.NOT_FOUND);}
+			em.remove(candidature);
+			tx.commit();
+		} catch (PersistenceException te) {
+			close();
+			return new ResponseEntity<Object>("ERREUR SUPPRESSION", HttpStatus.BAD_REQUEST);
+		} 
+		close();
+		return new ResponseEntity<Object>("CANDIDATURE SUPPRIMEE", HttpStatus.OK);
+	}	
 	
 }

@@ -2,6 +2,7 @@ package com.candidature.entities;
 
 import java.io.Serializable;
 import java.lang.String;
+import java.util.List;
 
 import javax.persistence.*;
 
@@ -25,7 +26,7 @@ public class Candidat implements Serializable{
 	@Column(nullable = false)
 	private String prenom;
 	
-	@Column(nullable = false, unique = true)
+	@Column(nullable = false, length = 10, unique = true)
 	private String telephone;
 	
 	@Column(nullable = false, unique = true)
@@ -49,10 +50,10 @@ public class Candidat implements Serializable{
 	@Column(nullable = false)
 	private String ville;
 	
-	private static final long serialVersionUID = 1L;
+	@Transient
+	private List<Candidature> candidatures;
 	
-	@OneToOne(mappedBy="candidat") 
-	private Candidature candidature;
+	private static final long serialVersionUID = 1L;
 
 	public Candidat() {
 		super();
@@ -113,15 +114,6 @@ public class Candidat implements Serializable{
 		this.situationFamiliale = situationFamiliale;
 	}
 	
-	@JsonIgnore
-	public Candidature getCandidature() {
-		return candidature;
-	}
-	
-	public void setCandidature(Candidature candidature) {
-		this.candidature = candidature;
-	}
-	
 	public String getPassword() {
 		return this.password;
 	}
@@ -154,12 +146,11 @@ public class Candidat implements Serializable{
 		this.ville = ville;
 	}
 	
-	public String toString() {
-		return "Candidat [id=" + id + ", nom=" + nom + ", prenom=" + prenom
-				+ ", telephone=" + telephone + ", email=" + email
-				+ ", diplome=" + diplome + ", situationFamiliale=" + situationFamiliale
-				+ ", password=" + password 
-				+ ", adresse=" + adresse + ", codePostal=" + codePostal
-				+ ", ville=" + ville + ", candidature=" + candidature + "]";
+	public List<Candidature> getListCandidatures() {
+		return candidatures;
+	}
+	
+	public void setListCandidatures(List<Candidature> candidatures) {
+		this.candidatures = candidatures;
 	}
 }
