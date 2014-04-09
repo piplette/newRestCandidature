@@ -53,7 +53,7 @@ public class CandidatController {
 	/*****************************************/
 	/**** ENVOI DU MOT DE PASSE PAR EMAIL ****/
 	/*****************************************/
-	public static void sendMail(String destination, String contenu){  
+	private void sendMail(String destination, String contenu){  
         final String username = "candidature.paris5@gmail.com";
         final String password = "candidature";
         Properties props = new Properties();
@@ -113,16 +113,13 @@ public class CandidatController {
 	public ResponseEntity<Object> findCandidatById(
 			@PathVariable("id") int candidatId,
 			@RequestHeader(value = "Authorization", required = false) String authorization) {
-		open();
 		if(authorization == null) {
-			close();
 			return new ResponseEntity<Object>("COMPTE ABSENT", HttpStatus.UNAUTHORIZED);
 		}else {
+			open();
 			Candidat candidat = null;
-			// Recuperation currentUser
 			try {
 				candidat = Authorization.getCurrentUserByAuthorization(authorization);
-				// Si erreur pendant la recuperation
 			} catch (Exception e) {
 				return new ResponseEntity<Object>("ERREUR", HttpStatus.INTERNAL_SERVER_ERROR);
 			}
