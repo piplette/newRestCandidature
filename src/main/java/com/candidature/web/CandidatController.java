@@ -87,7 +87,7 @@ public class CandidatController {
 	/*****************************************/
 	@RequestMapping(value = "/login", method = RequestMethod.GET, consumes = "application/json", produces = "application/json")
 	@ResponseBody
-	public ResponseEntity<Object> findCandidat(
+	public ResponseEntity<Object> loginCandidat(
 			@RequestHeader(value = "Authorization", required = false) String authorization) {
 		if(authorization == null) {
 			return new ResponseEntity<Object>("AUTHENTIFICATION ABSENTE", HttpStatus.UNAUTHORIZED);
