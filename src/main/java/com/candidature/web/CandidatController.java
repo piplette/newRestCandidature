@@ -18,9 +18,11 @@ import javax.persistence.Persistence;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.web.session.HttpSessionCreatedEvent;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 import com.candidature.auth.Authorization;
 import com.candidature.entities.Candidat;
@@ -102,7 +105,9 @@ public class CandidatController {
 			}
 			if(candidat == null){return new ResponseEntity<Object>("MAUVAISE IDENTIFICATION", HttpStatus.UNAUTHORIZED);}
 			return new ResponseEntity<Object>(candidat, HttpStatus.OK);
-		}		
+		}	
+		
+		 
 	}
 
 	/*****************************************/
@@ -115,22 +120,17 @@ public class CandidatController {
 			@RequestHeader(value = "Authorization", required = false) String authorization) {
 		if(authorization == null) {
 			return new ResponseEntity<Object>("COMPTE ABSENT", HttpStatus.UNAUTHORIZED);
-		}else {
-			open();
+		} else {
 			Candidat candidat = null;
 			try {
 				candidat = Authorization.getCurrentUserByAuthorization(authorization);
 			} catch (Exception e) {
 				return new ResponseEntity<Object>("ERREUR", HttpStatus.INTERNAL_SERVER_ERROR);
 			}
-			if(candidat == null){return new ResponseEntity<Object>("MAUVAISE IDENTIFICATION", HttpStatus.UNAUTHORIZED);}
+			if (candidat == null) {return new ResponseEntity<Object>("MAUVAISE IDENTIFICATION", HttpStatus.UNAUTHORIZED);}
+			if (candidat == null) {return new ResponseEntity<Object>("CANDIDAT ABSENT", HttpStatus.NOT_FOUND);}
+			return new ResponseEntity<Object>(candidat, HttpStatus.OK);
 		}
-		
-		if(candidatId <= 0){close();return new ResponseEntity<Object>("PAS ID", HttpStatus.BAD_REQUEST);}
-		Candidat candidat = em.find(Candidat.class, candidatId);
-		close();
-		if(candidat == null){return new ResponseEntity<Object>("CANDIDAT ABSENT", HttpStatus.NOT_FOUND);}
-		return new ResponseEntity<Object>(candidat, HttpStatus.OK);
 	}
 
 	/*****************************************/
@@ -152,7 +152,7 @@ public class CandidatController {
 	/****************************************/
 	@RequestMapping(value = "/add", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	public ResponseEntity<Object> createCandidat(@RequestBody Candidat candidat) {
-		open();
+		
 		if (candidat.getAdresse() == null) { return new ResponseEntity<Object>("adresse vide", HttpStatus.BAD_REQUEST);} 
 		if (candidat.getCodePostal() == null) { return new ResponseEntity<Object>("cp vide", HttpStatus.BAD_REQUEST);} 
 		if (candidat.getDiplome() == null) { return new ResponseEntity<Object>("diplome vide", HttpStatus.BAD_REQUEST);} 
@@ -166,6 +166,7 @@ public class CandidatController {
 		int valeur = 100 + r.nextInt(900);
 		String password = candidat.getNom()+ valeur;
 		candidat.setPassword(password);
+		open();
 		try {
 			EntityTransaction tx = em.getTransaction();
 			tx.begin();
@@ -185,7 +186,6 @@ public class CandidatController {
 	/****************************************/
 	@RequestMapping(value = "/update", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
 	public ResponseEntity<Object> updateCandidat(@RequestBody Candidat candidat) {
-		open();
 		if (candidat.getId() <= 0) { return new ResponseEntity<Object>("idCandidat vide", HttpStatus.BAD_REQUEST);}
 		if (candidat.getAdresse() == null) { return new ResponseEntity<Object>("adresse vide", HttpStatus.BAD_REQUEST);} 
 		if (candidat.getCodePostal() == null) { return new ResponseEntity<Object>("cp vide", HttpStatus.BAD_REQUEST);} 
@@ -198,6 +198,7 @@ public class CandidatController {
 		if (candidat.getTelephone() == null) { return new ResponseEntity<Object>("telephone vide", HttpStatus.BAD_REQUEST);}
 		if (candidat.getVille() == null) { return new ResponseEntity<Object>("ville vide", HttpStatus.BAD_REQUEST);}
 		if (candidat.getPassword() == null) { return new ResponseEntity<Object>("password vide", HttpStatus.BAD_REQUEST);}
+		open();
 		try {
 			EntityTransaction tx = em.getTransaction();
 			tx.begin();
@@ -229,8 +230,8 @@ public class CandidatController {
 	@RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE, produces = "application/json")
 	@ResponseBody
 	public ResponseEntity<Object> deleteCandidat(@PathVariable("id") int candidatId) {
-		open();
 		if(candidatId <= 0) { return new ResponseEntity<Object>("idCandidat vide", HttpStatus.BAD_REQUEST);}
+		open();
 		try {
 			EntityTransaction tx = em.getTransaction();
 			tx.begin();

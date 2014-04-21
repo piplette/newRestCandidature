@@ -48,8 +48,8 @@ public class CandidatureController {
 	@ResponseBody
 	public ResponseEntity<Object> findCandidatureById(
 			@PathVariable("id") int candidatureId) {
+		if(candidatureId <= 0){return new ResponseEntity<Object>("PAS ID", HttpStatus.BAD_REQUEST);}
 		open();
-		if(candidatureId <= 0){close();return new ResponseEntity<Object>("PAS ID", HttpStatus.BAD_REQUEST);}
 		Candidature candidature = em.find(Candidature.class, candidatureId);
 		close();
 		if(candidature == null){return new ResponseEntity<Object>("CANDIDATURE ABSENTE", HttpStatus.NOT_FOUND);}
@@ -76,14 +76,13 @@ public class CandidatureController {
 	@RequestMapping(value = "/add", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
 	public ResponseEntity<Object> createCandidature(@RequestBody Candidature candidature) {
-		open();
 		if (candidature.getMotivation() == null) { return new ResponseEntity<Object>("motivation vide", HttpStatus.BAD_REQUEST);} 
-//		if (candidature.getCandidatCandidature().getId() <= 0) { return new ResponseEntity<Object>("idCandidat vide", HttpStatus.BAD_REQUEST);} 	
-//		if (candidature.getSession().getId() <= 0) { return new ResponseEntity<Object>("idEtat vide", HttpStatus.BAD_REQUEST);}
+		if (candidature.getIdCandidat() <= 0) { return new ResponseEntity<Object>("idCandidat vide", HttpStatus.BAD_REQUEST);} 	
+		if (candidature.getIdSession() <= 0) { return new ResponseEntity<Object>("idSession vide", HttpStatus.BAD_REQUEST);}
 		java.util.Date date = new java.util.Date();
 		candidature.setDateInscription(new Date(date.getYear(), date.getMonth(), date.getDate()));
-		Etat etat = new Etat();
-		etat.setId(5);
+		candidature.setIdEtat(1);
+		open();
 		try {
 			EntityTransaction tx = em.getTransaction();
 			tx.begin();
@@ -103,11 +102,18 @@ public class CandidatureController {
 	@RequestMapping(value = "/update", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
 	@ResponseBody
 	public ResponseEntity<Object> updateCandidat(@RequestBody Candidature candidature) {
+		if (candidature.getId() <= 0) { return new ResponseEntity<Object>("idCandidature vide", HttpStatus.BAD_REQUEST);}
+		if (candidature.getMotivation() == null) { return new ResponseEntity<Object>("motivation vide", HttpStatus.BAD_REQUEST);} 
+		if (candidature.getIdCandidat() <= 0) { return new ResponseEntity<Object>("idCandidat vide", HttpStatus.BAD_REQUEST);} 	
+		if (candidature.getIdSession() <= 0) { return new ResponseEntity<Object>("idSession vide", HttpStatus.BAD_REQUEST);}
+		if (candidature.getIdEtat() <= 0) { return new ResponseEntity<Object>("idEtat vide", HttpStatus.BAD_REQUEST);}
 		open();
 		try {
 			EntityTransaction tx = em.getTransaction();
 			tx.begin();
-
+			Candidature newCandidature = em.find(Candidature.class, candidature.getId());
+			if( newCandidature == null){ return new ResponseEntity<Object>("CANDIDATURE ABSENTE", HttpStatus.NOT_FOUND);}
+			newCandidature.setIdEtat(candidature.getIdEtat());
 			em.flush();
 			tx.commit();
 		} catch (PersistenceException te) {
@@ -115,7 +121,7 @@ public class CandidatureController {
 			return new ResponseEntity<Object>("Doublon", HttpStatus.CONFLICT);
 		} 
 		close();
-		return new ResponseEntity<Object>("OK", HttpStatus.OK);
+		return new ResponseEntity<Object>("CANDIDATURE MISE A JOUR", HttpStatus.OK);
 	}
 	
 	/************************************************/
@@ -124,8 +130,8 @@ public class CandidatureController {
 	@RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE, produces = "application/json")
 	@ResponseBody
 	public ResponseEntity<Object> deleteCandidature(@PathVariable("id") int candidatureId) {
-		open();
 		if(candidatureId <= 0) { return new ResponseEntity<Object>("idCandidature vide", HttpStatus.BAD_REQUEST);}
+		open();
 		try {
 			EntityTransaction tx = em.getTransaction();
 			tx.begin();
