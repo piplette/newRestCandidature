@@ -22,7 +22,7 @@ public class Session implements Serializable{
 	@Column(name = "SESSION_ID")
 	private int id;
 	
-	@Column(nullable = false)
+	@Column(nullable = false, unique = true)
 	private String nom;
 	
 	@Column(name = "DATE_DEBUT", nullable = false)

@@ -119,7 +119,7 @@ public class CandidatController {
 			@PathVariable("id") int candidatId,
 			@RequestHeader(value = "Authorization", required = false) String authorization) {
 		if(authorization == null) {
-			return new ResponseEntity<Object>("COMPTE ABSENT", HttpStatus.UNAUTHORIZED);
+			return new ResponseEntity<Object>("AUTORISATION ABSENTE", HttpStatus.UNAUTHORIZED);
 		} else {
 			Candidat candidat = null;
 			try {

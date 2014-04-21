@@ -30,10 +30,13 @@ http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 	</bean>
 	<bean id="candidatureController" class="com.candidature.web.CandidatureController">
 	</bean>
+	<bean id="autorisationController" class="com.candidature.web.AutorisationController">
+	</bean>
 	<bean id="authorization" class="com.candidature.auth.Authorization">
 	</bean>
 	<bean id="basicAuth" class="com.candidature.auth.BasicAuth">
 	</bean>
+	
 	
 	<!-- Rest Template -->
 	<bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
