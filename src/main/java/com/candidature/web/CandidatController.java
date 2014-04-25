@@ -127,8 +127,7 @@ public class CandidatController {
 			} catch (Exception e) {
 				return new ResponseEntity<Object>("ERREUR", HttpStatus.INTERNAL_SERVER_ERROR);
 			}
-			if (candidat == null) {return new ResponseEntity<Object>("MAUVAISE IDENTIFICATION", HttpStatus.UNAUTHORIZED);}
-			if (candidat == null) {return new ResponseEntity<Object>("CANDIDAT ABSENT", HttpStatus.NOT_FOUND);}
+			if(candidat == null){return new ResponseEntity<Object>("MAUVAISE AUTHENTIFICATION", HttpStatus.UNAUTHORIZED);}
 			return new ResponseEntity<Object>(candidat, HttpStatus.OK);
 		}
 	}
