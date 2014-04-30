@@ -61,24 +61,24 @@ public class Authorization {
 		if (authorizationHeader != null) {
 			String[] chaine = BasicAuth.decode(authorizationHeader);
 			String email = chaine[0];
-			String mdp = chaine[1];
+			String password = chaine[1];
+			System.out.println(email);
+			System.out.println(password);
 			EntityManagerFactory emf = Persistence
 					.createEntityManagerFactory("manager");
 			EntityManager em = emf.createEntityManager();
-			EntityTransaction tx = em.getTransaction();
-			tx.begin();
 			Query query = em
 					.createQuery(
-							"SELECT a FROM Candidat a WHERE a.password = :mdp AND a.email = :email")
-					.setParameter("paswword", mdp).setParameter("email", email);
-			@SuppressWarnings("unchecked")
+							"SELECT a FROM Candidat a WHERE a.password = :password AND a.email = :email")
+					.setParameter("password", password).setParameter("email", email);
+//			@SuppressWarnings("unchecked")
 			List<Candidat> candidats = query.getResultList();
 			if (!candidats.isEmpty() && candidats.size() == 1) {
 				candidat = candidats.get(0);
 			}
+			em.close();
+			emf.close();
 		}
 		return candidat;
-
 	}
-
 }
