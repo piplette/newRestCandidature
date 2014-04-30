@@ -98,7 +98,7 @@ public class CandidatController {
 			Candidat candidat = null;
 			// Recuperation candidat
 			try {
-				candidat = Authorization.getCurrentUserByAuthorization(authorization);
+				candidat = Authorization.getCurrentUserByAuthorizationByPassword(authorization);
 				// Si erreur pendant la recuperation
 			} catch (Exception e) {
 				return new ResponseEntity<Object>("ERREUR", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -123,7 +123,7 @@ public class CandidatController {
 		} else {
 			Candidat candidat = null;
 			try {
-				candidat = Authorization.getCurrentUserByAuthorization(authorization);
+				candidat = Authorization.getCurrentUserByAuthorizationById(authorization);
 			} catch (Exception e) {
 				return new ResponseEntity<Object>("ERREUR", HttpStatus.INTERNAL_SERVER_ERROR);
 			}
