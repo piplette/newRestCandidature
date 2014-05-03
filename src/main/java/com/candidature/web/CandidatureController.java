@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.candidature.entities.Candidat;
 import com.candidature.entities.Candidature;
 import com.candidature.entities.Etat;
+import com.candidature.entities.Session;
 
 @Controller
 @RequestMapping("/candidature")
@@ -76,13 +77,25 @@ public class CandidatureController {
 	@RequestMapping(value = "/add", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
 	public ResponseEntity<Object> createCandidature(@RequestBody Candidature candidature) {
-		if (candidature.getMotivation() == null) { return new ResponseEntity<Object>("motivation vide", HttpStatus.BAD_REQUEST);} 
+		if (candidature.getMotivation().isEmpty()) { return new ResponseEntity<Object>("motivation vide", HttpStatus.BAD_REQUEST);} 
 		if (candidature.getIdCandidat() <= 0) { return new ResponseEntity<Object>("idCandidat vide", HttpStatus.BAD_REQUEST);} 	
 		if (candidature.getIdSession() <= 0) { return new ResponseEntity<Object>("idSession vide", HttpStatus.BAD_REQUEST);}
 		java.util.Date date = new java.util.Date();
 		candidature.setDateInscription(new Date(date.getYear(), date.getMonth(), date.getDate()));
 		candidature.setIdEtat(1);
 		open();
+		Etat etat = em.find(Etat.class, candidature.getIdEtat());
+		if(etat == null){		
+			close();
+			return new ResponseEntity<Object>("ETAT NON TROUVE", HttpStatus.NOT_FOUND);
+		}
+		Session session = em.find(Session.class, candidature.getIdSession());
+		if(session == null){		
+			close();
+			return new ResponseEntity<Object>("SESSION NON TROUVE", HttpStatus.BAD_REQUEST);
+		}
+		candidature.setNomEtat(etat.getNom());
+		candidature.setNomSession(session.getNom());
 		try {
 			EntityTransaction tx = em.getTransaction();
 			tx.begin();
@@ -103,17 +116,23 @@ public class CandidatureController {
 	@ResponseBody
 	public ResponseEntity<Object> updateCandidat(@RequestBody Candidature candidature) {
 		if (candidature.getId() <= 0) { return new ResponseEntity<Object>("idCandidature vide", HttpStatus.BAD_REQUEST);}
-		if (candidature.getMotivation() == null) { return new ResponseEntity<Object>("motivation vide", HttpStatus.BAD_REQUEST);} 
+		if (candidature.getMotivation().isEmpty()) { return new ResponseEntity<Object>("motivation vide", HttpStatus.BAD_REQUEST);} 
 		if (candidature.getIdCandidat() <= 0) { return new ResponseEntity<Object>("idCandidat vide", HttpStatus.BAD_REQUEST);} 	
 		if (candidature.getIdSession() <= 0) { return new ResponseEntity<Object>("idSession vide", HttpStatus.BAD_REQUEST);}
 		if (candidature.getIdEtat() <= 0) { return new ResponseEntity<Object>("idEtat vide", HttpStatus.BAD_REQUEST);}
 		open();
+		Etat etat = em.find(Etat.class, candidature.getIdEtat());
+		if(etat == null){		
+			close();
+			return new ResponseEntity<Object>("ETAT NON TROUVE", HttpStatus.NOT_FOUND);
+		}
 		try {
 			EntityTransaction tx = em.getTransaction();
 			tx.begin();
 			Candidature newCandidature = em.find(Candidature.class, candidature.getId());
 			if( newCandidature == null){ return new ResponseEntity<Object>("CANDIDATURE ABSENTE", HttpStatus.NOT_FOUND);}
 			newCandidature.setIdEtat(candidature.getIdEtat());
+			newCandidature.setNomEtat(etat.getNom());
 			em.flush();
 			tx.commit();
 		} catch (PersistenceException te) {

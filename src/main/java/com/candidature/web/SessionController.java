@@ -87,7 +87,7 @@ public class SessionController {
 	@RequestMapping(value = "/add", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	public ResponseEntity<Object> createSession(@RequestBody Session session) {
 		open();
-		if (session.getNom() == null) { return new ResponseEntity<Object>("nom vide", HttpStatus.BAD_REQUEST);} 
+		if (session.getNom().isEmpty()) { return new ResponseEntity<Object>("nom vide", HttpStatus.BAD_REQUEST);} 
 		if (session.getDateDebut() == null) { return new ResponseEntity<Object>("dateDebut vide", HttpStatus.BAD_REQUEST);} 
 		if (session.getDateFin() == null) { return new ResponseEntity<Object>("dateFin vide", HttpStatus.BAD_REQUEST);} 
 		if (session.getPeriodeSession() == null) { return new ResponseEntity<Object>("periodeSession vide", HttpStatus.BAD_REQUEST);}
@@ -111,7 +111,7 @@ public class SessionController {
 	public ResponseEntity<Object> updateSession(@RequestBody Session session) {
 		open();
 		if(session.getId() <= 0) { return new ResponseEntity<Object>("idSession vide", HttpStatus.BAD_REQUEST);}
-		if (session.getNom() == null) { return new ResponseEntity<Object>("nom vide", HttpStatus.BAD_REQUEST);} 
+		if (session.getNom().isEmpty()) { return new ResponseEntity<Object>("nom vide", HttpStatus.BAD_REQUEST);} 
 		if (session.getDateDebut() == null) { return new ResponseEntity<Object>("dateDebut vide", HttpStatus.BAD_REQUEST);} 
 		if (session.getDateFin() == null) { return new ResponseEntity<Object>("dateFin vide", HttpStatus.BAD_REQUEST);} 
 		if (session.getPeriodeSession() == null) { return new ResponseEntity<Object>("periodeSession vide", HttpStatus.BAD_REQUEST);}

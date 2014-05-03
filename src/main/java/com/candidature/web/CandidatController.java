@@ -151,16 +151,15 @@ public class CandidatController {
 	/****************************************/
 	@RequestMapping(value = "/add", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	public ResponseEntity<Object> createCandidat(@RequestBody Candidat candidat) {
-		
-		if (candidat.getAdresse() == null) { return new ResponseEntity<Object>("adresse vide", HttpStatus.BAD_REQUEST);} 
-		if (candidat.getCodePostal() == null) { return new ResponseEntity<Object>("cp vide", HttpStatus.BAD_REQUEST);} 
-		if (candidat.getDiplome() == null) { return new ResponseEntity<Object>("diplome vide", HttpStatus.BAD_REQUEST);} 
-		if (candidat.getEmail() == null) { return new ResponseEntity<Object>("email vide", HttpStatus.BAD_REQUEST);}
-		if (candidat.getNom() == null) { return new ResponseEntity<Object>("nom vide", HttpStatus.BAD_REQUEST);}
-		if (candidat.getPrenom() == null) { return new ResponseEntity<Object>("prenom vide", HttpStatus.BAD_REQUEST); } 
-		if (candidat.getSituationFamiliale() == null) { return new ResponseEntity<Object>("sitFam vide", HttpStatus.BAD_REQUEST);}
-		if (candidat.getTelephone() == null) { return new ResponseEntity<Object>("telephone vide", HttpStatus.BAD_REQUEST);}
-		if (candidat.getVille() == null) { return new ResponseEntity<Object>("ville vide", HttpStatus.BAD_REQUEST);}
+		if (candidat.getAdresse().isEmpty()) { return new ResponseEntity<Object>("adresse vide", HttpStatus.BAD_REQUEST);} 
+		if (candidat.getCodePostal().isEmpty()) { return new ResponseEntity<Object>("cp vide", HttpStatus.BAD_REQUEST);} 
+		if (candidat.getDiplome().isEmpty()) { return new ResponseEntity<Object>("diplome vide", HttpStatus.BAD_REQUEST);} 
+		if (candidat.getEmail().isEmpty()) { return new ResponseEntity<Object>("email vide", HttpStatus.BAD_REQUEST);}
+		if (candidat.getNom().isEmpty()) { return new ResponseEntity<Object>("nom vide", HttpStatus.BAD_REQUEST);}
+		if (candidat.getPrenom().isEmpty()) { return new ResponseEntity<Object>("prenom vide", HttpStatus.BAD_REQUEST); } 
+		if (candidat.getSituationFamiliale().isEmpty()) { return new ResponseEntity<Object>("sitFam vide", HttpStatus.BAD_REQUEST);}
+		if (candidat.getTelephone().isEmpty()) { return new ResponseEntity<Object>("telephone vide", HttpStatus.BAD_REQUEST);}
+		if (candidat.getVille().isEmpty()) { return new ResponseEntity<Object>("ville vide", HttpStatus.BAD_REQUEST);}
 		Random r = new Random();
 		int valeur = 100 + r.nextInt(900);
 		String password = candidat.getNom()+ valeur;
@@ -186,17 +185,17 @@ public class CandidatController {
 	@RequestMapping(value = "/update", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
 	public ResponseEntity<Object> updateCandidat(@RequestBody Candidat candidat) {
 		if (candidat.getId() <= 0) { return new ResponseEntity<Object>("idCandidat vide", HttpStatus.BAD_REQUEST);}
-		if (candidat.getAdresse() == null) { return new ResponseEntity<Object>("adresse vide", HttpStatus.BAD_REQUEST);} 
-		if (candidat.getCodePostal() == null) { return new ResponseEntity<Object>("cp vide", HttpStatus.BAD_REQUEST);} 
-		if (candidat.getDiplome() == null) { return new ResponseEntity<Object>("diplome vide", HttpStatus.BAD_REQUEST);} 
-		if (candidat.getEmail() == null) { return new ResponseEntity<Object>("email vide", HttpStatus.BAD_REQUEST);}
-		if (candidat.getNom() == null) { return new ResponseEntity<Object>("nom vide", HttpStatus.BAD_REQUEST);}
-		if (candidat.getPassword() == null) { return new ResponseEntity<Object>("password vide", HttpStatus.BAD_REQUEST);}
-		if (candidat.getPrenom() == null) { return new ResponseEntity<Object>("prenom vide", HttpStatus.BAD_REQUEST); } 
-		if (candidat.getSituationFamiliale() == null) { return new ResponseEntity<Object>("sitFam vide", HttpStatus.BAD_REQUEST);}
-		if (candidat.getTelephone() == null) { return new ResponseEntity<Object>("telephone vide", HttpStatus.BAD_REQUEST);}
-		if (candidat.getVille() == null) { return new ResponseEntity<Object>("ville vide", HttpStatus.BAD_REQUEST);}
-		if (candidat.getPassword() == null) { return new ResponseEntity<Object>("password vide", HttpStatus.BAD_REQUEST);}
+		if (candidat.getAdresse().isEmpty()) { return new ResponseEntity<Object>("adresse vide", HttpStatus.BAD_REQUEST);} 
+		if (candidat.getCodePostal().isEmpty()) { return new ResponseEntity<Object>("cp vide", HttpStatus.BAD_REQUEST);} 
+		if (candidat.getDiplome().isEmpty()) { return new ResponseEntity<Object>("diplome vide", HttpStatus.BAD_REQUEST);} 
+		if (candidat.getEmail().isEmpty()) { return new ResponseEntity<Object>("email vide", HttpStatus.BAD_REQUEST);}
+		if (candidat.getNom().isEmpty()) { return new ResponseEntity<Object>("nom vide", HttpStatus.BAD_REQUEST);}
+		if (candidat.getPassword().isEmpty()) { return new ResponseEntity<Object>("password vide", HttpStatus.BAD_REQUEST);}
+		if (candidat.getPrenom().isEmpty()) { return new ResponseEntity<Object>("prenom vide", HttpStatus.BAD_REQUEST); } 
+		if (candidat.getSituationFamiliale().isEmpty()) { return new ResponseEntity<Object>("sitFam vide", HttpStatus.BAD_REQUEST);}
+		if (candidat.getTelephone().isEmpty()) { return new ResponseEntity<Object>("telephone vide", HttpStatus.BAD_REQUEST);}
+		if (candidat.getVille().isEmpty()) { return new ResponseEntity<Object>("ville vide", HttpStatus.BAD_REQUEST);}
+		if (candidat.getPassword().isEmpty()) { return new ResponseEntity<Object>("password vide", HttpStatus.BAD_REQUEST);}
 		open();
 		try {
 			EntityTransaction tx = em.getTransaction();

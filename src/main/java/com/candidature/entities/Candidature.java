@@ -32,9 +32,15 @@ public class Candidature implements Serializable{
 	@Column(name = "SESSION_ID", nullable = false)
 	private int idSession;
 	
+	@Column(name = "SESSION_NOM", nullable = false)
+	private String nomSession;
+	
 	@Column(name = "ETAT_ID", nullable = false)
 	private int idEtat;
 	
+	@Column(name = "ETAT_NOM", nullable = false)
+	private String nomEtat;
+
 	private static final long serialVersionUID = 1L;
 	
 	
@@ -81,6 +87,14 @@ public class Candidature implements Serializable{
 	public void setIdSession(int idSession) {
 		this.idSession = idSession;
 	}
+	
+	public String getNomSession() {
+		return nomSession;
+	}
+
+	public void setNomSession(String nomSession) {
+		this.nomSession = nomSession;
+	}
 
 	public int getIdEtat() {
 		return idEtat;
@@ -88,5 +102,13 @@ public class Candidature implements Serializable{
 
 	public void setIdEtat(int idEtat) {
 		this.idEtat = idEtat;
+	}
+	
+	public String getNomEtat() {
+		return nomEtat;
+	}
+
+	public void setNomEtat(String nomEtat) {
+		this.nomEtat = nomEtat;
 	}
 }

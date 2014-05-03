@@ -73,7 +73,7 @@ public class EtatController {
 	@ResponseBody
 	public ResponseEntity<Object> createEtat(@RequestBody Etat etat) {
 		open();
-		if (etat.getNom() == null) { return new ResponseEntity<Object>("nom vide", HttpStatus.BAD_REQUEST);} 
+		if (etat.getNom().isEmpty()) { return new ResponseEntity<Object>("nom vide", HttpStatus.BAD_REQUEST);} 
 		try {
 			EntityTransaction tx = em.getTransaction();
 			tx.begin();
@@ -99,7 +99,8 @@ public class EtatController {
 			EntityTransaction tx = em.getTransaction();
 			tx.begin();
 			Etat newEtat = em.find(Etat.class, etat.getId());
-			if(newEtat == null){ return new ResponseEntity<Object>("NON TROUVE", HttpStatus.NOT_FOUND);}			
+			if(newEtat == null){ return new ResponseEntity<Object>("NON TROUVE", HttpStatus.NOT_FOUND);}	
+			newEtat.setNom(etat.getNom());
 			em.flush();
 			tx.commit();
 		} catch (PersistenceException te) {
