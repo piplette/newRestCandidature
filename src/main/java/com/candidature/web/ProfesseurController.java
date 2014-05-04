@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.candidature.auth.Authorization;
+import com.candidature.entities.Candidat;
 import com.candidature.entities.Professeur;
 import com.candidature.entities.Session;
 
@@ -111,22 +112,37 @@ public class ProfesseurController {
 	/*****************************************/
 	@RequestMapping(value = "/get/{id}", method = RequestMethod.GET, consumes = "application/json", produces = "application/json")
 	@ResponseBody
-	public ResponseEntity<Object> findProfesseurById(
+	public ResponseEntity<Object> findCandidatById(
 			@PathVariable("id") int professeurId,
 			@RequestHeader(value = "Authorization", required = false) String authorization) {
-		if(authorization == null) {
-			return new ResponseEntity<Object>("AUTORISATION ABSENTE", HttpStatus.UNAUTHORIZED);
-		} else {
-			Professeur professeur = null;
-			try {
-				professeur = Authorization.getCurrentProfesseurByAuthorization(authorization);
-			} catch (Exception e) {
-				return new ResponseEntity<Object>("ERREUR", HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-			if(professeur == null){return new ResponseEntity<Object>("MAUVAISE AUTHENTIFICATION", HttpStatus.UNAUTHORIZED);}
-			return new ResponseEntity<Object>(professeur, HttpStatus.OK);
-		}
+		open();
+		Professeur professeur = em.find(Professeur.class, professeurId);
+		close();
+		if(professeur == null){return new ResponseEntity<Object>("MAUVAISE AUTHENTIFICATION", HttpStatus.UNAUTHORIZED);}
+		return new ResponseEntity<Object>(professeur, HttpStatus.OK);
 	}
+	
+//	/*****************************************/
+//	/***** RECHERCHER UN CANDIDAT PAR ID *****/
+//	/*****************************************/
+//	@RequestMapping(value = "/get/{id}", method = RequestMethod.GET, consumes = "application/json", produces = "application/json")
+//	@ResponseBody
+//	public ResponseEntity<Object> findProfesseurById(
+//			@PathVariable("id") int professeurId,
+//			@RequestHeader(value = "Authorization", required = false) String authorization) {
+//		if(authorization == null) {
+//			return new ResponseEntity<Object>("AUTORISATION ABSENTE", HttpStatus.UNAUTHORIZED);
+//		} else {
+//			Professeur professeur = null;
+//			try {
+//				professeur = Authorization.getCurrentProfesseurByAuthorization(authorization);
+//			} catch (Exception e) {
+//				return new ResponseEntity<Object>("ERREUR", HttpStatus.INTERNAL_SERVER_ERROR);
+//			}
+//			if(professeur == null){return new ResponseEntity<Object>("MAUVAISE AUTHENTIFICATION", HttpStatus.UNAUTHORIZED);}
+//			return new ResponseEntity<Object>(professeur, HttpStatus.OK);
+//		}
+//	}
 
 	/*****************************************/
 	/***** RECHERCHER TOUS LES CANDIDATS *****/

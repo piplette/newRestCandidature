@@ -1,6 +1,8 @@
 package com.candidature.web;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.candidature.entities.Candidature;
 import com.candidature.entities.Etat;
+import com.candidature.entities.Professeur;
 import com.candidature.entities.Session;
 
 @Controller
@@ -64,19 +67,57 @@ public class CandidatureController {
 	/**********************************************/
 	/***** RECHERCHER TOUTES LES CANDIDATURES *****/
 	/**********************************************/
-	@RequestMapping(value = "/getAll/{id}", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/getAllByCandidat/{id}", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
-	public ResponseEntity<Object> findAllCandidature(
+	public ResponseEntity<Object> findAllCandidatureByCandidat(
 			@PathVariable("id") int candidatId,
 			@RequestParam(value = "sujet", required = false) String sujet) {
 		open();
-		Query query = em.createQuery("select c from Candidature c where c.candidat_id = :candidat_id").setParameter("candidat_id", 1.00);
-		List<Candidature> candidatures = query.getResultList();
+		Query query = em.createQuery("select c from Candidature c");
+		List<Candidature> candidaturesTemp = query.getResultList();
 		close();
+		if(candidaturesTemp.size() == 0){return new ResponseEntity<Object>("TABLE VIDE", HttpStatus.NOT_FOUND);}
+		Iterator<Candidature> it = candidaturesTemp.iterator();
+		List<Candidature> candidatures = new ArrayList<Candidature>();
+		while(it.hasNext()){
+			Candidature candidature = it.next();
+			if(candidature.getIdCandidat() == candidatId){
+				candidatures.add(candidature);
+			}
+		}
 		if(candidatures.size() == 0){return new ResponseEntity<Object>("TABLE VIDE", HttpStatus.NOT_FOUND);}
 		return new ResponseEntity<Object>(candidatures, HttpStatus.OK);
 	}
 
+	/**********************************************/
+	/***** RECHERCHER TOUTES LES CANDIDATURES *****/
+	/**********************************************/
+	@RequestMapping(value = "/getAllByProfesseur/{id}", method = RequestMethod.GET, produces = "application/json")
+	@ResponseBody
+	public ResponseEntity<Object> findAllCandidatureByProfesseur(
+			@PathVariable("id") int professeurId,
+			@RequestParam(value = "sujet", required = false) String sujet) {
+		open();
+		Professeur professeur = em.find(Professeur.class, professeurId);
+		if(professeur == null){close();return new ResponseEntity<Object>("PROFESSEUR VIDE", HttpStatus.NOT_FOUND);}
+		Query query = em.createQuery("select c from Candidature c");
+		List<Candidature> candidaturesTemp = query.getResultList();
+		close();
+		if(candidaturesTemp.size() == 0){return new ResponseEntity<Object>("TABLE VIDE", HttpStatus.NOT_FOUND);}
+		Iterator<Candidature> it = candidaturesTemp.iterator();
+		List<Candidature> candidatures = new ArrayList<Candidature>();
+		while(it.hasNext()){
+			Candidature candidature = it.next();
+			if(candidature.getIdSession() == professeur.getIdSession()){
+				candidatures.add(candidature);
+			}
+		}
+		if(candidatures.size() == 0){return new ResponseEntity<Object>("TABLE VIDE", HttpStatus.NOT_FOUND);}
+		return new ResponseEntity<Object>(candidatures, HttpStatus.OK);
+	}
+
+	
+	
 	/********************************************/
 	/***** ENREGISTREMENT D'UNE CANDIDATURE *****/
 	/********************************************/

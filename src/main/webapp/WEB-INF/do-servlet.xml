@@ -30,6 +30,8 @@ http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 	</bean>
 	<bean id="candidatureController" class="com.candidature.web.CandidatureController">
 	</bean>
+	<bean id="professeurController" class="com.candidature.web.ProfesseurController">
+	</bean>
 	<bean id="authorization" class="com.candidature.auth.Authorization">
 	</bean>
 	<bean id="basicAuth" class="com.candidature.auth.BasicAuth">
