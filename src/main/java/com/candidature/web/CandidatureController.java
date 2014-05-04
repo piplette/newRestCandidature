@@ -108,7 +108,7 @@ public class CandidatureController {
 		List<Candidature> candidatures = new ArrayList<Candidature>();
 		while(it.hasNext()){
 			Candidature candidature = it.next();
-			if(candidature.getIdSession() == professeur.getIdSession()){
+			if(candidature.getNomSession().compareTo(professeur.getNomSession())==0){
 				candidatures.add(candidature);
 			}
 		}
