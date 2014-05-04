@@ -181,28 +181,32 @@ public class CandidatureController {
 			return new ResponseEntity<Object>("idCandidature vide",
 					HttpStatus.BAD_REQUEST);
 		}
-		if (candidature.getMotivation().isEmpty()) {
-			return new ResponseEntity<Object>("motivation vide",
-					HttpStatus.BAD_REQUEST);
-		}
-		if (candidature.getIdCandidat() <= 0) {
-			return new ResponseEntity<Object>("idCandidat vide",
-					HttpStatus.BAD_REQUEST);
-		}
-		if (candidature.getIdSession() <= 0) {
-			return new ResponseEntity<Object>("idSession vide",
-					HttpStatus.BAD_REQUEST);
-		}
-		if (candidature.getIdEtat() <= 0) {
-			return new ResponseEntity<Object>("idEtat vide",
+//		if (candidature.getMotivation().isEmpty()) {
+//			return new ResponseEntity<Object>("motivation vide",
+//					HttpStatus.BAD_REQUEST);
+//		}
+//		if (candidature.getIdCandidat() <= 0) {
+//			return new ResponseEntity<Object>("idCandidat vide",
+//					HttpStatus.BAD_REQUEST);
+//		}
+//		if (candidature.getIdSession() <= 0) {
+//			return new ResponseEntity<Object>("idSession vide",
+//					HttpStatus.BAD_REQUEST);
+//		}
+		if (candidature.getNomEtat().isEmpty()) {
+			return new ResponseEntity<Object>("nomEtat vide",
 					HttpStatus.BAD_REQUEST);
 		}
 		open();
-		Etat etat = em.find(Etat.class, candidature.getIdEtat());
-		if (etat == null) {
+		
+		Query query = em.createQuery("select e from Etat e where e.nom = :nomEtat")
+				.setParameter("nomEtat",candidature.getNomEtat());
+		Etat etat;
+		try {
+			etat = (Etat) query.getSingleResult();
+		}  catch (PersistenceException te) {
 			close();
-			return new ResponseEntity<Object>("ETAT NON TROUVE",
-					HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Object>("ETAT NON TROUVE", HttpStatus.NOT_FOUND);
 		}
 		try {
 			EntityTransaction tx = em.getTransaction();
@@ -213,7 +217,7 @@ public class CandidatureController {
 				return new ResponseEntity<Object>("CANDIDATURE ABSENTE",
 						HttpStatus.NOT_FOUND);
 			}
-			newCandidature.setIdEtat(candidature.getIdEtat());
+			newCandidature.setIdEtat(etat.getId());
 			newCandidature.setNomEtat(etat.getNom());
 			em.flush();
 			tx.commit();
