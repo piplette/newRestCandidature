@@ -70,7 +70,7 @@ public class CandidatureController {
 			@PathVariable("id") int candidatId,
 			@RequestParam(value = "sujet", required = false) String sujet) {
 		open();
-		Query query = em.createQuery("select c from Candidature c where c.motivation = :candidat_id").setParameter("candidat_id", "nom");
+		Query query = em.createQuery("select c from Candidature c where c.candidat_id = :candidat_id").setParameter("candidat_id", 1.00);
 		List<Candidature> candidatures = query.getResultList();
 		close();
 		if(candidatures.size() == 0){return new ResponseEntity<Object>("TABLE VIDE", HttpStatus.NOT_FOUND);}
