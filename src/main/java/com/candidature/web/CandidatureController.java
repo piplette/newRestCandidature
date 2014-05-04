@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.candidature.entities.Candidat;
 import com.candidature.entities.Candidature;
 import com.candidature.entities.Etat;
 import com.candidature.entities.Session;
@@ -49,22 +48,29 @@ public class CandidatureController {
 	@ResponseBody
 	public ResponseEntity<Object> findCandidatureById(
 			@PathVariable("id") int candidatureId) {
-		if(candidatureId <= 0){return new ResponseEntity<Object>("PAS ID", HttpStatus.BAD_REQUEST);}
+		if (candidatureId <= 0) {
+			return new ResponseEntity<Object>("PAS ID", HttpStatus.BAD_REQUEST);
+		}
 		open();
 		Candidature candidature = em.find(Candidature.class, candidatureId);
 		close();
-		if(candidature == null){return new ResponseEntity<Object>("CANDIDATURE ABSENTE", HttpStatus.NOT_FOUND);}
+		if (candidature == null) {
+			return new ResponseEntity<Object>("CANDIDATURE ABSENTE",
+					HttpStatus.NOT_FOUND);
+		}
 		return new ResponseEntity<Object>(candidature, HttpStatus.OK);
 	}
 
 	/**********************************************/
 	/***** RECHERCHER TOUTES LES CANDIDATURES *****/
 	/**********************************************/
-	@RequestMapping(value = "/getAll", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/getAll/{id}", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
-	public ResponseEntity<Object> findAllCandidature(@RequestParam(value = "sujet", required = false) String sujet) {
+	public ResponseEntity<Object> findAllCandidature(
+			@PathVariable("id") int candidatId,
+			@RequestParam(value = "sujet", required = false) String sujet) {
 		open();
-		Query query = em.createQuery("select c from Candidature c");
+		Query query = em.createQuery("select c from Candidature c where c.motivation = :candidat_id").setParameter("candidat_id", "nom");
 		List<Candidature> candidatures = query.getResultList();
 		close();
 		if(candidatures.size() == 0){return new ResponseEntity<Object>("TABLE VIDE", HttpStatus.NOT_FOUND);}
@@ -76,23 +82,36 @@ public class CandidatureController {
 	/********************************************/
 	@RequestMapping(value = "/add", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
-	public ResponseEntity<Object> createCandidature(@RequestBody Candidature candidature) {
-		if (candidature.getMotivation().isEmpty()) { return new ResponseEntity<Object>("motivation vide", HttpStatus.BAD_REQUEST);} 
-		if (candidature.getIdCandidat() <= 0) { return new ResponseEntity<Object>("idCandidat vide", HttpStatus.BAD_REQUEST);} 	
-		if (candidature.getIdSession() <= 0) { return new ResponseEntity<Object>("idSession vide", HttpStatus.BAD_REQUEST);}
+	public ResponseEntity<Object> createCandidature(
+			@RequestBody Candidature candidature) {
+		if (candidature.getMotivation().isEmpty()) {
+			return new ResponseEntity<Object>("motivation vide",
+					HttpStatus.BAD_REQUEST);
+		}
+		if (candidature.getIdCandidat() <= 0) {
+			return new ResponseEntity<Object>("idCandidat vide",
+					HttpStatus.BAD_REQUEST);
+		}
+		if (candidature.getIdSession() <= 0) {
+			return new ResponseEntity<Object>("idSession vide",
+					HttpStatus.BAD_REQUEST);
+		}
 		java.util.Date date = new java.util.Date();
-		candidature.setDateInscription(new Date(date.getYear(), date.getMonth(), date.getDate()));
+		candidature.setDateInscription(new Date(date.getYear(),
+				date.getMonth(), date.getDate()));
 		candidature.setIdEtat(1);
 		open();
 		Etat etat = em.find(Etat.class, candidature.getIdEtat());
-		if(etat == null){		
+		if (etat == null) {
 			close();
-			return new ResponseEntity<Object>("ETAT NON TROUVE", HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Object>("ETAT NON TROUVE",
+					HttpStatus.NOT_FOUND);
 		}
 		Session session = em.find(Session.class, candidature.getIdSession());
-		if(session == null){		
+		if (session == null) {
 			close();
-			return new ResponseEntity<Object>("SESSION NON TROUVE", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<Object>("SESSION NON TROUVE",
+					HttpStatus.BAD_REQUEST);
 		}
 		candidature.setNomEtat(etat.getNom());
 		candidature.setNomSession(session.getNom());
@@ -106,31 +125,53 @@ public class CandidatureController {
 			return new ResponseEntity<Object>("Doublon", HttpStatus.CONFLICT);
 		}
 		close();
-		return new ResponseEntity<Object>("CANDIDATURE CREE", HttpStatus.CREATED);
+		return new ResponseEntity<Object>("CANDIDATURE CREE",
+				HttpStatus.CREATED);
 	}
-	
+
 	/****************************************/
 	/***** MISE A JOUR D'UNE CANDIDATURE ****/
 	/****************************************/
 	@RequestMapping(value = "/update", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
 	@ResponseBody
-	public ResponseEntity<Object> updateCandidat(@RequestBody Candidature candidature) {
-		if (candidature.getId() <= 0) { return new ResponseEntity<Object>("idCandidature vide", HttpStatus.BAD_REQUEST);}
-		if (candidature.getMotivation().isEmpty()) { return new ResponseEntity<Object>("motivation vide", HttpStatus.BAD_REQUEST);} 
-		if (candidature.getIdCandidat() <= 0) { return new ResponseEntity<Object>("idCandidat vide", HttpStatus.BAD_REQUEST);} 	
-		if (candidature.getIdSession() <= 0) { return new ResponseEntity<Object>("idSession vide", HttpStatus.BAD_REQUEST);}
-		if (candidature.getIdEtat() <= 0) { return new ResponseEntity<Object>("idEtat vide", HttpStatus.BAD_REQUEST);}
+	public ResponseEntity<Object> updateCandidat(
+			@RequestBody Candidature candidature) {
+		if (candidature.getId() <= 0) {
+			return new ResponseEntity<Object>("idCandidature vide",
+					HttpStatus.BAD_REQUEST);
+		}
+		if (candidature.getMotivation().isEmpty()) {
+			return new ResponseEntity<Object>("motivation vide",
+					HttpStatus.BAD_REQUEST);
+		}
+		if (candidature.getIdCandidat() <= 0) {
+			return new ResponseEntity<Object>("idCandidat vide",
+					HttpStatus.BAD_REQUEST);
+		}
+		if (candidature.getIdSession() <= 0) {
+			return new ResponseEntity<Object>("idSession vide",
+					HttpStatus.BAD_REQUEST);
+		}
+		if (candidature.getIdEtat() <= 0) {
+			return new ResponseEntity<Object>("idEtat vide",
+					HttpStatus.BAD_REQUEST);
+		}
 		open();
 		Etat etat = em.find(Etat.class, candidature.getIdEtat());
-		if(etat == null){		
+		if (etat == null) {
 			close();
-			return new ResponseEntity<Object>("ETAT NON TROUVE", HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Object>("ETAT NON TROUVE",
+					HttpStatus.NOT_FOUND);
 		}
 		try {
 			EntityTransaction tx = em.getTransaction();
 			tx.begin();
-			Candidature newCandidature = em.find(Candidature.class, candidature.getId());
-			if( newCandidature == null){ return new ResponseEntity<Object>("CANDIDATURE ABSENTE", HttpStatus.NOT_FOUND);}
+			Candidature newCandidature = em.find(Candidature.class,
+					candidature.getId());
+			if (newCandidature == null) {
+				return new ResponseEntity<Object>("CANDIDATURE ABSENTE",
+						HttpStatus.NOT_FOUND);
+			}
 			newCandidature.setIdEtat(candidature.getIdEtat());
 			newCandidature.setNomEtat(etat.getNom());
 			em.flush();
@@ -138,32 +179,42 @@ public class CandidatureController {
 		} catch (PersistenceException te) {
 			close();
 			return new ResponseEntity<Object>("Doublon", HttpStatus.CONFLICT);
-		} 
+		}
 		close();
-		return new ResponseEntity<Object>("CANDIDATURE MISE A JOUR", HttpStatus.OK);
+		return new ResponseEntity<Object>("CANDIDATURE MISE A JOUR",
+				HttpStatus.OK);
 	}
-	
+
 	/************************************************/
 	/********* SUPPRESSION D'UNE CANDIDATURE ********/
 	/************************************************/
 	@RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE, produces = "application/json")
 	@ResponseBody
-	public ResponseEntity<Object> deleteCandidature(@PathVariable("id") int candidatureId) {
-		if(candidatureId <= 0) { return new ResponseEntity<Object>("idCandidature vide", HttpStatus.BAD_REQUEST);}
+	public ResponseEntity<Object> deleteCandidature(
+			@PathVariable("id") int candidatureId) {
+		if (candidatureId <= 0) {
+			return new ResponseEntity<Object>("idCandidature vide",
+					HttpStatus.BAD_REQUEST);
+		}
 		open();
 		try {
 			EntityTransaction tx = em.getTransaction();
 			tx.begin();
 			Candidature candidature = em.find(Candidature.class, candidatureId);
-			if(candidature == null){ return new ResponseEntity<Object>("NON TROUVE", HttpStatus.NOT_FOUND);}
+			if (candidature == null) {
+				return new ResponseEntity<Object>("NON TROUVE",
+						HttpStatus.NOT_FOUND);
+			}
 			em.remove(candidature);
 			tx.commit();
 		} catch (PersistenceException te) {
 			close();
-			return new ResponseEntity<Object>("ERREUR SUPPRESSION", HttpStatus.BAD_REQUEST);
-		} 
+			return new ResponseEntity<Object>("ERREUR SUPPRESSION",
+					HttpStatus.BAD_REQUEST);
+		}
 		close();
-		return new ResponseEntity<Object>("CANDIDATURE SUPPRIMEE", HttpStatus.OK);
-	}	
-	
+		return new ResponseEntity<Object>("CANDIDATURE SUPPRIMEE",
+				HttpStatus.OK);
+	}
+
 }

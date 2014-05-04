@@ -6,6 +6,7 @@
 		<class>com.candidature.entities.Candidature</class>
 		<class>com.candidature.entities.Etat</class>
 		<class>com.candidature.entities.Session</class>
+		<class>com.candidature.entities.Professeur</class>
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
 		<properties>
 			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost/RestCandidature" />

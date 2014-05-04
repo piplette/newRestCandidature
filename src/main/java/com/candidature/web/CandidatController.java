@@ -18,11 +18,8 @@ import javax.persistence.Persistence;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.web.session.HttpSessionCreatedEvent;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,7 +28,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.SessionAttributes;
 
 import com.candidature.auth.Authorization;
 import com.candidature.entities.Candidat;
@@ -98,7 +94,7 @@ public class CandidatController {
 			Candidat candidat = null;
 			// Recuperation candidat
 			try {
-				candidat = Authorization.getCurrentUserByAuthorizationByPassword(authorization);
+				candidat = Authorization.getCurrentCandidatByAuthorization(authorization);
 				// Si erreur pendant la recuperation
 			} catch (Exception e) {
 				return new ResponseEntity<Object>("ERREUR", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -118,20 +114,35 @@ public class CandidatController {
 	public ResponseEntity<Object> findCandidatById(
 			@PathVariable("id") int candidatId,
 			@RequestHeader(value = "Authorization", required = false) String authorization) {
-		if(authorization == null) {
-			return new ResponseEntity<Object>("AUTORISATION ABSENTE", HttpStatus.UNAUTHORIZED);
-		} else {
-			Candidat candidat = null;
-			try {
-				candidat = Authorization.getCurrentUserByAuthorizationById(authorization);
-			} catch (Exception e) {
-				return new ResponseEntity<Object>("ERREUR", HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-			if(candidat == null){return new ResponseEntity<Object>("MAUVAISE AUTHENTIFICATION", HttpStatus.UNAUTHORIZED);}
-			return new ResponseEntity<Object>(candidat, HttpStatus.OK);
-		}
+		open();
+		Candidat candidat = em.find(Candidat.class, candidatId);
+		close();
+		if(candidat == null){return new ResponseEntity<Object>("MAUVAISE AUTHENTIFICATION", HttpStatus.UNAUTHORIZED);}
+		return new ResponseEntity<Object>(candidat, HttpStatus.OK);
 	}
 
+//	/*****************************************/
+//	/***** RECHERCHER UN CANDIDAT PAR ID *****/
+//	/*****************************************/
+//	@RequestMapping(value = "/get/{id}", method = RequestMethod.GET, consumes = "application/json", produces = "application/json")
+//	@ResponseBody
+//	public ResponseEntity<Object> findCandidatById(
+//			@PathVariable("id") int candidatId,
+//			@RequestHeader(value = "Authorization", required = false) String authorization) {
+//		if(authorization == null) {
+//			return new ResponseEntity<Object>("AUTORISATION ABSENTE", HttpStatus.UNAUTHORIZED);
+//		} else {
+//			Candidat candidat = null;
+//			try {
+//				candidat = Authorization.getCurrentCandidatByAuthorization(authorization);
+//			} catch (Exception e) {
+//				return new ResponseEntity<Object>("ERREUR", HttpStatus.INTERNAL_SERVER_ERROR);
+//			}
+//			if(candidat == null){return new ResponseEntity<Object>("MAUVAISE AUTHENTIFICATION", HttpStatus.UNAUTHORIZED);}
+//			return new ResponseEntity<Object>(candidat, HttpStatus.OK);
+//		}
+//	}
+	
 	/*****************************************/
 	/***** RECHERCHER TOUS LES CANDIDATS *****/
 	/*****************************************/

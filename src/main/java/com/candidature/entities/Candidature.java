@@ -5,9 +5,6 @@ import java.sql.Date;
 
 import javax.persistence.*;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-
-
 /**
  * Entity implementation class for Entity: Candidature
  *

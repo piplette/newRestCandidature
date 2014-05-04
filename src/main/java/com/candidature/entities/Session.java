@@ -3,12 +3,9 @@ package com.candidature.entities;
 import java.io.Serializable;
 import java.lang.String;
 import java.sql.Date;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.*;
-
-import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  * Entity implementation class for Entity: Session
