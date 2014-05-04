@@ -206,7 +206,6 @@ public class CandidatController {
 		if (candidat.getSituationFamiliale().isEmpty()) { return new ResponseEntity<Object>("sitFam vide", HttpStatus.BAD_REQUEST);}
 		if (candidat.getTelephone().isEmpty()) { return new ResponseEntity<Object>("telephone vide", HttpStatus.BAD_REQUEST);}
 		if (candidat.getVille().isEmpty()) { return new ResponseEntity<Object>("ville vide", HttpStatus.BAD_REQUEST);}
-		if (candidat.getPassword().isEmpty()) { return new ResponseEntity<Object>("password vide", HttpStatus.BAD_REQUEST);}
 		open();
 		try {
 			EntityTransaction tx = em.getTransaction();

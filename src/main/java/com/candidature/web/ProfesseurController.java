@@ -83,9 +83,9 @@ public class ProfesseurController {
         }
     }
 	
-	/*****************************************/
-	/***** RECHERCHER UN CANDIDAT PAR ID *****/
-	/*****************************************/
+	/*******************************************/
+	/***** RECHERCHER UN PROFESSEUR PAR ID *****/
+	/*******************************************/
 	@RequestMapping(value = "/login", method = RequestMethod.GET, consumes = "application/json", produces = "application/json")
 	@ResponseBody
 	public ResponseEntity<Object> loginProfesseur(
@@ -108,9 +108,9 @@ public class ProfesseurController {
 		 
 	}
 
-	/*****************************************/
-	/***** RECHERCHER UN CANDIDAT PAR ID *****/
-	/*****************************************/
+	/*******************************************/
+	/***** RECHERCHER UN PROFESSEUR PAR ID *****/
+	/*******************************************/
 	@RequestMapping(value = "/get/{id}", method = RequestMethod.GET, consumes = "application/json", produces = "application/json")
 	@ResponseBody
 	public ResponseEntity<Object> findCandidatById(
@@ -145,9 +145,9 @@ public class ProfesseurController {
 //		}
 //	}
 
-	/*****************************************/
-	/***** RECHERCHER TOUS LES CANDIDATS *****/
-	/*****************************************/
+	/*******************************************/
+	/***** RECHERCHER TOUS LES PROFESSEURS *****/
+	/*******************************************/
 	@RequestMapping(value = "/getAll", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
 	public ResponseEntity<Object> findAllProfesseur(@RequestParam(value = "sujet", required = false) String sujet) {
@@ -159,13 +159,13 @@ public class ProfesseurController {
 		return new ResponseEntity<Object>(professeurs, HttpStatus.OK);
 	}
 
-	/****************************************/
-	/***** ENREGISTREMENT D'UN CANDIDAT *****/
-	/****************************************/
+	/******************************************/
+	/***** ENREGISTREMENT D'UN PROFESSEUR *****/
+	/******************************************/
 	@RequestMapping(value = "/add", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	public ResponseEntity<Object> createProfesseur(@RequestBody Professeur professeur) { 	
 		if (professeur.getEmail().isEmpty()) { return new ResponseEntity<Object>("email vide", HttpStatus.BAD_REQUEST);}
-		if (professeur.getIdSession() <= 0) { return new ResponseEntity<Object>("idSession vide", HttpStatus.BAD_REQUEST);}
+		if (professeur.getNomSession().isEmpty()) { return new ResponseEntity<Object>("nomSession vide", HttpStatus.BAD_REQUEST);}
 		if (professeur.getNom().isEmpty()) { return new ResponseEntity<Object>("nom vide", HttpStatus.BAD_REQUEST);}
 		if (professeur.getPrenom().isEmpty()) { return new ResponseEntity<Object>("prenom vide", HttpStatus.BAD_REQUEST);} 
 		if (professeur.getTelephone().isEmpty()) { return new ResponseEntity<Object>("telephone vide", HttpStatus.BAD_REQUEST);}
@@ -191,20 +191,28 @@ public class ProfesseurController {
 		return new ResponseEntity<Object>("PROFESSEUR CREE", HttpStatus.CREATED);
 	}
 	
-	/****************************************/
-	/***** ENREGISTREMENT D'UN CANDIDAT *****/
-	/****************************************/
+	/***************************************/
+	/***** MISE A JOUR D'UN PROFESSEUR *****/
+	/***************************************/
 	@RequestMapping(value = "/update", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
 	public ResponseEntity<Object> updateProfesseur(@RequestBody Professeur professeur) {
 		if (professeur.getId() <= 0) { return new ResponseEntity<Object>("idProfesseur vide", HttpStatus.BAD_REQUEST);}
 		if (professeur.getEmail().isEmpty()) { return new ResponseEntity<Object>("email vide", HttpStatus.BAD_REQUEST);}
-		if (professeur.getIdSession() <= 0) { return new ResponseEntity<Object>("idSession vide", HttpStatus.BAD_REQUEST);}
+		if (professeur.getNomSession().isEmpty()) { return new ResponseEntity<Object>("nomSession vide", HttpStatus.BAD_REQUEST);}
 		if (professeur.getNom().isEmpty()) { return new ResponseEntity<Object>("nom vide", HttpStatus.BAD_REQUEST);}
 		if (professeur.getPrenom().isEmpty()) { return new ResponseEntity<Object>("prenom vide", HttpStatus.BAD_REQUEST);} 
 		if (professeur.getTelephone().isEmpty()) { return new ResponseEntity<Object>("telephone vide", HttpStatus.BAD_REQUEST);}
 		open();
-		Session session = em.find(Session.class, professeur.getIdSession());
-		if(session == null){close();return new ResponseEntity<Object>("SESSION NON TROUVE", HttpStatus.NOT_FOUND);}
+		Query query = em.createQuery("select s from Session s where s.nom = :nomSession")
+				.setParameter("nomSession",professeur.getNomSession());
+		Session session;
+		try {
+			session = (Session) query.getSingleResult();
+		}  catch (PersistenceException te) {
+			close();
+			return new ResponseEntity<Object>("SESSION NON TROUVE", HttpStatus.NOT_FOUND);
+		}
+//		if(session == null){close();return new ResponseEntity<Object>("SESSION NON TROUVE", HttpStatus.NOT_FOUND);}
 		try {
 			EntityTransaction tx = em.getTransaction();
 			tx.begin();
@@ -216,6 +224,7 @@ public class ProfesseurController {
 			newProfesseur.setPrenom(professeur.getPrenom());
 			newProfesseur.setTelephone(professeur.getTelephone());
 			newProfesseur.setNomSession(session.getNom());
+			newProfesseur.setIdSession(session.getId());
 			em.flush();
 			tx.commit();
 		} catch (PersistenceException te) {
@@ -226,9 +235,9 @@ public class ProfesseurController {
 		return new ResponseEntity<Object>("MIS A JOUR", HttpStatus.OK);
 	}
 	
-	/****************************************/
-	/******* SUPPRESSION D'UN CANDIDAT ******/
-	/****************************************/
+	/******************************************/
+	/******* SUPPRESSION D'UN PROFESSEUR ******/
+	/******************************************/
 	@RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE, produces = "application/json")
 	@ResponseBody
 	public ResponseEntity<Object> deleteProfesseur(@PathVariable("id") int professeurId) {
