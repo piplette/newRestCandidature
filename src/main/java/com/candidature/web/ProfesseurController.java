@@ -54,8 +54,8 @@ public class ProfesseurController {
 	/**** ENVOI DU MOT DE PASSE PAR EMAIL ****/
 	/*****************************************/
 	private void sendMail(String destination, String contenu){  
-        final String username = "professeurure.paris5@gmail.com";
-        final String password = "professeurure";
+        final String username = "candidature.paris5@gmail.com";
+        final String password = "candidature";
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
@@ -76,6 +76,7 @@ public class ProfesseurController {
 			String contenuMessage = "Veuillez trouver votre mot de passe pour vous connecter ˆ votre interface professeur : "+contenu;
 			message.setSubject(sujet);
 			message.setContent(contenuMessage, "text/html;charset=UTF-8");
+			System.out.println(message);
 			Transport.send(message);
         } catch (MessagingException e) {
             throw new RuntimeException(e);
@@ -187,7 +188,7 @@ public class ProfesseurController {
 		}
 		close();
 		sendMail(professeur.getEmail(), password);
-		return new ResponseEntity<Object>("CANDIDAT CREE", HttpStatus.CREATED);
+		return new ResponseEntity<Object>("PROFESSEUR CREE", HttpStatus.CREATED);
 	}
 	
 	/****************************************/
@@ -222,7 +223,7 @@ public class ProfesseurController {
 			return new ResponseEntity<Object>("Doublon", HttpStatus.CONFLICT);
 		} 
 		close();
-		return new ResponseEntity<Object>("OK", HttpStatus.OK);
+		return new ResponseEntity<Object>("MIS A JOUR", HttpStatus.OK);
 	}
 	
 	/****************************************/
@@ -245,6 +246,6 @@ public class ProfesseurController {
 			return new ResponseEntity<Object>("ERREUR SUPPRESSION", HttpStatus.BAD_REQUEST);
 		} 
 		close();
-		return new ResponseEntity<Object>("CANDIDAT SUPPRIME", HttpStatus.OK);
+		return new ResponseEntity<Object>("PROFESSEUR SUPPRIME", HttpStatus.OK);
 	}	
 }
