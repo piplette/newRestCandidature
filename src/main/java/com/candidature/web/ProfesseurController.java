@@ -202,6 +202,7 @@ public class ProfesseurController {
 		if (professeur.getNom().isEmpty()) { return new ResponseEntity<Object>("nom vide", HttpStatus.BAD_REQUEST);}
 		if (professeur.getPrenom().isEmpty()) { return new ResponseEntity<Object>("prenom vide", HttpStatus.BAD_REQUEST);} 
 		if (professeur.getTelephone().isEmpty()) { return new ResponseEntity<Object>("telephone vide", HttpStatus.BAD_REQUEST);}
+		if (professeur.getPassword().isEmpty()) { return new ResponseEntity<Object>("password vide", HttpStatus.BAD_REQUEST);}
 		open();
 		Query query = em.createQuery("select s from Session s where s.nom = :nomSession")
 				.setParameter("nomSession",professeur.getNomSession());
